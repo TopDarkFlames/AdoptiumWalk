@@ -75,7 +75,8 @@ async function handleRoadmap(
       name: attachment.filename,
       size: attachment.size,
       url: attachment.url
-    } as { name: string; size: number; url: string; contentType?: string };
+    } as { name: string; size: number; url: string; proxyUrl?: string; contentType?: string };
+    if (attachment.proxy_url) roadmapAttachment.proxyUrl = attachment.proxy_url;
     if (attachment.content_type) roadmapAttachment.contentType = attachment.content_type;
     readme = await downloadRoadmapAttachment(roadmapAttachment, config.maxReadmeBytes);
   } catch (error) {

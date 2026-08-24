@@ -1,6 +1,7 @@
 export interface RoadmapAttachment {
   name: string;
   url: string;
+  proxyUrl?: string;
   size: number;
   contentType?: string | null;
 }
@@ -8,6 +9,7 @@ export interface RoadmapAttachment {
 const ALLOWED_EXTENSIONS = new Set([".md", ".markdown", ".txt"]);
 const ALLOWED_HOSTS = new Set(["cdn.discordapp.com", "media.discordapp.net"]);
 const ALLOWED_APPLICATION_TYPES = new Set(["application/octet-stream", "application/x-markdown"]);
+const MAX_REDIRECTS = 3;
 
 function validatedDiscordUrl(rawUrl: string): URL {
   let url: URL;
@@ -20,6 +22,25 @@ function validatedDiscordUrl(rawUrl: string): URL {
     throw new Error("O anexo precisa estar hospedado pelo Discord.");
   }
   return url;
+}
+
+async function fetchDiscordUrl(rawUrl: string, fetcher: typeof fetch): Promise<Response> {
+  let url = validatedDiscordUrl(rawUrl);
+  for (let redirects = 0; redirects <= MAX_REDIRECTS; redirects += 1) {
+    const response = await fetcher(url, {
+      redirect: "manual",
+      signal: AbortSignal.timeout(15_000),
+      headers: { "user-agent": "AdoptiumWalk/1.0" }
+    });
+    if (response.status < 300 || response.status >= 400) return response;
+
+    const location = response.headers.get("location");
+    if (!location || redirects === MAX_REDIRECTS) {
+      throw new Error("O Discord redirecionou o anexo muitas vezes.");
+    }
+    url = validatedDiscordUrl(new URL(location, url).toString());
+  }
+  throw new Error("O Discord redirecionou o anexo muitas vezes.");
 }
 
 export async function downloadRoadmapAttachment(
@@ -41,19 +62,30 @@ export async function downloadRoadmapAttachment(
     throw new Error(`O anexo excede o limite de ${maxBytes} bytes.`);
   }
 
-  const url = validatedDiscordUrl(attachment.url);
-  let response: Response;
-  try {
-    response = await fetcher(url, {
-      redirect: "error",
-      signal: AbortSignal.timeout(15_000),
-      headers: { "user-agent": "AdoptiumWalk/1.0" }
-    });
-  } catch {
-    throw new Error("Não foi possível baixar o anexo do Discord.");
+  const urls = [attachment.url, attachment.proxyUrl]
+    .filter((value): value is string => Boolean(value));
+  let response: Response | undefined;
+  let lastError: unknown;
+  for (const candidate of urls) {
+    try {
+      const downloaded = await fetchDiscordUrl(candidate, fetcher);
+      if (downloaded.ok) {
+        response = downloaded;
+        break;
+      }
+      lastError = new Error(`O Discord respondeu HTTP ${downloaded.status}.`);
+    } catch (error) {
+      lastError = error;
+    }
   }
-  if (!response.ok) throw new Error("O Discord não disponibilizou o anexo.");
-  validatedDiscordUrl(response.url || url.toString());
+  if (!response) {
+    console.warn(JSON.stringify({
+      event: "discord_attachment_download_failed",
+      error: lastError instanceof Error ? lastError.message.slice(0, 200) : "erro desconhecido"
+    }));
+    throw new Error("Não foi possível baixar o anexo do Discord. Anexe o arquivo novamente e tente outra vez.");
+  }
+  if (response.url) validatedDiscordUrl(response.url);
 
   const declaredLength = Number(response.headers.get("content-length"));
   if (Number.isFinite(declaredLength) && declaredLength > maxBytes) {

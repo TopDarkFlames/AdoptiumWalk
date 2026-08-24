@@ -3,6 +3,7 @@ export interface DiscordAttachment {
   filename: string;
   size: number;
   url: string;
+  proxy_url?: string;
   content_type?: string;
 }
 
