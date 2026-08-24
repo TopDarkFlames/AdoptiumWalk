@@ -9,7 +9,8 @@ function required(name: string): string {
 async function main(): Promise<void> {
   const applicationId = required("DISCORD_APPLICATION_ID");
   const token = required("DISCORD_TOKEN");
-  const guildId = process.env.DISCORD_GUILD_ID?.trim();
+  const global = process.argv.includes("--global");
+  const guildId = global ? undefined : process.env.DISCORD_GUILD_ID?.trim();
   const route = guildId
     ? `https://discord.com/api/v10/applications/${applicationId}/guilds/${guildId}/commands`
     : `https://discord.com/api/v10/applications/${applicationId}/commands`;

@@ -2,9 +2,17 @@
 
 Bot serverless do Discord que transforma um README em metas acompanháveis, envia lembretes, observa commits do GitHub e cria um roadmap semanal com IA. O runtime usa **Cloudflare Workers + D1 + Workers AI** e não depende de VPS, contêiner ou computador ligado.
 
+## Adicionar o bot ao seu servidor
+
+[**Instalar AdoptiumWalk no Discord**](https://discord.com/oauth2/authorize?client_id=1539285893096013905&permissions=35840&integration_type=0&scope=bot%20applications.commands)
+
+O serviço hospedado é multi-servidor: cada servidor mantém seu próprio roadmap, lembretes, progresso e repositório no D1. O código fica em `TopDarkFlames/AdoptiumWalk`, mas uma equipe pode configurar qualquer projeto público, por exemplo `https://github.com/equipe/PIVAS`.
+
+Depois da instalação, use `/ajuda` dentro do Discord.
+
 ## Uso rápido
 
-Depois do deploy e do registro dos slash commands:
+Depois de instalar o bot — ou fazer seu próprio deploy — siga este fluxo:
 
 1. importe [ROADMAP.md](./ROADMAP.md) no Discord com `/roadmap importar`;
 2. conecte um repositório público com `/repositorio configurar`;
@@ -81,9 +89,9 @@ cp .dev.vars.example .dev.vars
 Preencha `.dev.vars` apenas na máquina local:
 
 ```dotenv
-DISCORD_APPLICATION_ID=1539285893096013905
+DISCORD_APPLICATION_ID=seu_application_id
 DISCORD_PUBLIC_KEY=sua_chave_publica
-DISCORD_GUILD_ID=1536379631572099092
+DISCORD_GUILD_ID=servidor_de_teste_opcional
 DISCORD_TOKEN=token_novo_do_bot
 AI_API_KEY=
 ```
@@ -150,25 +158,30 @@ Com o token novo preenchido em `.dev.vars`:
 
 ```bash
 npm run deploy:commands
+npm run deploy:commands:global
 ```
 
-Como `DISCORD_GUILD_ID` está definido, os comandos são atualizados diretamente no servidor de teste.
+`deploy:commands` atualiza imediatamente o servidor definido em `DISCORD_GUILD_ID`, útil para testes. `deploy:commands:global` publica os comandos para todos os servidores que instalarem o bot.
 
-## Configuração já preparada
+## Configuração por servidor
 
-O arquivo `wrangler.jsonc` ativa automaticamente, no primeiro `/roadmap importar`:
+Nenhum canal ou repositório é compartilhado entre servidores. Um administrador configura o projeto localmente com:
 
-- servidor Discord: `1536379631572099092`;
-- canal de lembretes: `1539266892597039134`;
-- fuso: `America/Sao_Paulo`;
-- frequência: todos os dias;
-- horários: `08:00`, `12:00`, `15:00`, `20:30` e `23:00`.
+```text
+/roadmap importar
+/repositorio configurar
+/lembretes configurar
+```
+
+O fuso padrão é `America/Sao_Paulo`, mas pode ser alterado em cada configuração. Canais, horários, cargos, progresso e GitHub ficam associados ao ID do servidor no D1.
 
 O Cron roda em UTC, mas o código calcula o horário no fuso IANA do projeto. Não é necessário converter manualmente e uma futura mudança de offset será respeitada pelo runtime.
 
 ## Comandos
 
 ```text
+/ajuda
+
 /roadmap importar arquivo:README.md nome:Meu Projeto
 /roadmap status
 
@@ -237,9 +250,6 @@ Os testes cobrem assinatura Ed25519, D1, cooldown, comandos, parser, preservaç�
 | `AI_MODEL` | variável | modelo da Responses API |
 | `AI_BASE_URL` | variável | endpoint do provedor OpenAI |
 | `DEFAULT_TIMEZONE` | variável | fuso padrão |
-| `DEFAULT_REMINDER_CHANNEL_ID` | variável | canal ativado no primeiro import |
-| `DEFAULT_REMINDER_TIMES` | variável | horários separados por vírgula |
-| `DEFAULT_REMINDER_FREQUENCY` | variável | todos os dias, úteis ou fins de semana |
 | `MAX_README_BYTES` | variável | limite do anexo, padrão 1 MB |
 | `MAX_GOALS` | variável | limite de metas, padrão 300 |
 | `AI_COOLDOWN_SECONDS` | variável | intervalo por usuário e servidor |

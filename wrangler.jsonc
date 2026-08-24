@@ -7,9 +7,6 @@
   "vars": {
     "DISCORD_APPLICATION_ID": "1539285893096013905",
     "DEFAULT_TIMEZONE": "America/Sao_Paulo",
-    "DEFAULT_REMINDER_CHANNEL_ID": "1539266892597039134",
-    "DEFAULT_REMINDER_TIMES": "08:00,12:00,15:00,20:30,23:00",
-    "DEFAULT_REMINDER_FREQUENCY": "todos-os-dias",
     "AI_MODEL": "gpt-5-mini",
     "AI_BASE_URL": "https://api.openai.com/v1",
     "MAX_README_BYTES": "1048576",

@@ -13,6 +13,7 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "deploy:commands": "tsx --env-file=.dev.vars scripts/register-commands.ts",
+    "deploy:commands:global": "tsx --env-file=.dev.vars scripts/register-commands.ts --global",
     "db:migrate:local": "wrangler d1 migrations apply adoptiumwalk --local",
     "db:migrate:remote": "wrangler d1 migrations apply adoptiumwalk --remote",
     "cf:typegen": "wrangler types src/cloudflare/worker-configuration.d.ts",

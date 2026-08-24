@@ -93,16 +93,6 @@ async function handleRoadmap(
 
   const project = await store.updateGuild(id, (previous) => {
     const merged = mergeRoadmap(id, readme, parsed, previous);
-    if (!merged.reminder && config.defaultReminder) {
-      merged.reminder = {
-        enabled: true,
-        channelId: config.defaultReminder.channelId,
-        times: config.defaultReminder.times,
-        timezone: config.defaultTimezone,
-        frequency: config.defaultReminder.frequency,
-        updatedAt: new Date().toISOString()
-      };
-    }
     return { project: merged, result: merged };
   });
   const completed = project.goals.filter((goal) => goal.completed).length;
@@ -263,8 +253,7 @@ async function handleRepository(
     const weeklyTime = optionValue<string>(subcommand.options, "horario", false)?.trim() || "08:00";
     const timezone = optionValue<string>(subcommand.options, "fuso", false)?.trim() || config.defaultTimezone;
     const channelId = optionValue<string>(subcommand.options, "canal", false)
-      ?? interaction.channel_id
-      ?? config.defaultReminder?.channelId;
+      ?? interaction.channel_id;
     if (!channelId) throw new PublicError("Não foi possível descobrir o canal de destino.");
     if (!isValidTime(weeklyTime)) throw new PublicError("Informe o horário no formato **HH:MM**.");
     if (!isValidTimezone(timezone)) throw new PublicError("Informe um fuso IANA válido, como **America/Sao_Paulo**.");
@@ -313,6 +302,16 @@ export async function handleDiscordCommand(
   const data = interaction.data;
   if (!data) throw new PublicError("O comando não contém dados válidos.");
   switch (data.name) {
+    case "ajuda":
+      return [
+        "## AdoptiumWalk — início rápido",
+        "Cada servidor possui seu próprio projeto e pode conectar **qualquer repositório público do GitHub**.",
+        "1. Envie um arquivo com checkboxes usando `/roadmap importar`.",
+        "2. Use `/repositorio configurar` e informe a URL, por exemplo `https://github.com/equipe/PIVAS`.",
+        "3. A cada commit novo, o bot atualiza as próximas metas e anexa o roadmap no canal.",
+        "4. Use `/metas concluir`, `/metas listar` e `/lembretes configurar` no acompanhamento diário.",
+        "Documentação: https://github.com/TopDarkFlames/AdoptiumWalk"
+      ].join("\n");
     case "roadmap":
       return handleRoadmap(interaction, data, store, config);
     case "metas":

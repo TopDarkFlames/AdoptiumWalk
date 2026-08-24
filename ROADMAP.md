@@ -24,6 +24,14 @@
 - [x] Fazer uma revisão completa toda segunda-feira
 - [x] Mostrar até três próximas metas diretamente na mensagem do Discord
 
+## Distribuição pública
+
+- [x] Isolar projetos, progresso e configurações pelo servidor Discord
+- [x] Aceitar qualquer repositório público informado em `/repositorio configurar`
+- [x] Publicar slash commands globais para servidores instaladores
+- [x] Disponibilizar link público de instalação do bot
+- [x] Adicionar `/ajuda` com instruções dentro do Discord
+
 ## Próximas metas — segurança
 
 - [ ] Rotacionar credenciais expostas e documentar o procedimento de resposta

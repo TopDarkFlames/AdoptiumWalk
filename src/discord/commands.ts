@@ -4,12 +4,17 @@ const INTEGER = 4;
 const CHANNEL = 7;
 const ROLE = 8;
 const ATTACHMENT = 11;
+const GUILD_ONLY = {
+  dm_permission: false,
+  integration_types: [0],
+  contexts: [0]
+} as const;
 
 export const commandData = [
   {
+    ...GUILD_ONLY,
     name: "roadmap",
     description: "Importa e consulta o roadmap deste servidor.",
-    dm_permission: false,
     options: [
       {
         type: SUB_COMMAND,
@@ -24,9 +29,9 @@ export const commandData = [
     ]
   },
   {
+    ...GUILD_ONLY,
     name: "metas",
     description: "Lista e atualiza metas do roadmap.",
-    dm_permission: false,
     options: [
       {
         type: SUB_COMMAND,
@@ -59,9 +64,9 @@ export const commandData = [
     ]
   },
   {
+    ...GUILD_ONLY,
     name: "lembretes",
     description: "Configura os lembretes automáticos do projeto.",
-    dm_permission: false,
     options: [
       {
         type: SUB_COMMAND,
@@ -90,9 +95,9 @@ export const commandData = [
     ]
   },
   {
+    ...GUILD_ONLY,
     name: "perguntar",
     description: "Pergunta à IA usando somente o contexto do projeto.",
-    dm_permission: false,
     options: [{
       type: STRING,
       name: "pergunta",
@@ -103,9 +108,9 @@ export const commandData = [
     }]
   },
   {
+    ...GUILD_ONLY,
     name: "repositorio",
     description: "Gera um roadmap semanal acompanhando os commits do GitHub.",
-    dm_permission: false,
     options: [
       {
         type: SUB_COMMAND,
@@ -123,5 +128,10 @@ export const commandData = [
       { type: SUB_COMMAND, name: "status", description: "Mostra a configuração e o último commit analisado." },
       { type: SUB_COMMAND, name: "desligar", description: "Desativa a atualização semanal do GitHub." }
     ]
+  },
+  {
+    ...GUILD_ONLY,
+    name: "ajuda",
+    description: "Explica como importar um roadmap e conectar qualquer projeto GitHub."
   }
 ] as const;
