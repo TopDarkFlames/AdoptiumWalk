@@ -1,0 +1,8 @@
+# Desenvolvimento local e registro dos comandos. Nunca versione o arquivo .dev.vars real.
+DISCORD_APPLICATION_ID=
+DISCORD_PUBLIC_KEY=
+DISCORD_GUILD_ID=
+DISCORD_TOKEN=
+
+# Opcional: habilita /perguntar.
+AI_API_KEY=

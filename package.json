@@ -1,0 +1,27 @@
+{
+  "name": "adoptiumwalk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bot serverless do Discord para transformar roadmaps Markdown em acompanhamento ativo de projetos.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:commands": "tsx --env-file=.dev.vars scripts/register-commands.ts",
+    "db:migrate:local": "wrangler d1 migrations apply adoptiumwalk --local",
+    "db:migrate:remote": "wrangler d1 migrations apply adoptiumwalk --remote",
+    "cf:typegen": "wrangler types src/cloudflare/worker-configuration.d.ts",
+    "test": "tsx --test test/**/*.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.125.0"
+  }
+}

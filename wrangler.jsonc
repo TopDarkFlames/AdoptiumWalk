@@ -1,0 +1,47 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "adoptiumwalk",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-08-24",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "DISCORD_APPLICATION_ID": "1539285893096013905",
+    "DEFAULT_TIMEZONE": "America/Sao_Paulo",
+    "DEFAULT_REMINDER_CHANNEL_ID": "1539266892597039134",
+    "DEFAULT_REMINDER_TIMES": "08:00,12:00,15:00,20:30,23:00",
+    "DEFAULT_REMINDER_FREQUENCY": "todos-os-dias",
+    "AI_MODEL": "gpt-5-mini",
+    "AI_BASE_URL": "https://api.openai.com/v1",
+    "MAX_README_BYTES": "1048576",
+    "MAX_GOALS": "300",
+    "AI_COOLDOWN_SECONDS": "20"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "adoptiumwalk",
+      "database_id": "1f06ec5b-4711-4496-b127-b7c108f3b060",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "ai": {
+    "binding": "AI"
+  },
+  "triggers": {
+    "crons": ["* * * * *"]
+  },
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true,
+      "persist": true
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.01,
+      "persist": true
+    }
+  }
+}
